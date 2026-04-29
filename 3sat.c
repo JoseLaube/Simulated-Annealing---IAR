@@ -5,6 +5,9 @@
 
 int quantClausulas = 91;
 int quantTerm = 20;
+double T_ini = 10.0;
+double T_fim = 0.3;
+int N = 5000;
 
 void inic_3sat(int clausulas[quantClausulas][3]){
         FILE *f = fopen("uf20-01.txt", "r");
@@ -74,7 +77,22 @@ int clausulas_aceitas(int clausulas[quantClausulas][3], int pos_solu[quantTerm])
     return cont;
 }
 
-void rotina(int pos_solu[quantTerm], int vizinhos[quantTerm], int clausulas[quantClausulas][3]){
+int pegar(int delta, int iteracao){
+    double prob = 0.0;
+    double chance = 0.0;
+    double t_atual = T_ini*(pow((T_fim/T_ini), ((double)iteracao/N)));
+    chance = exp(delta/t_atual);
+    prob = (float)rand() / RAND_MAX;
+    if(prob < chance){
+        return 1;
+    }
+    else{
+        return 0;
+    }
+    return 0;
+}
+
+void rotina(int pos_solu[quantTerm], int vizinhos[quantTerm], int clausulas[quantClausulas][3], int interacao){
     int a, b;
     a = clausulas_aceitas(clausulas, pos_solu);
     b = clausulas_aceitas(clausulas, vizinhos);
@@ -84,7 +102,14 @@ void rotina(int pos_solu[quantTerm], int vizinhos[quantTerm], int clausulas[quan
             pos_solu[i] = vizinhos[i];
         }
     }
-    //Se for falso tem que analisar a temperatura;
+    else{
+        int pega = pegar((b - a), interacao);
+        if(pega == 1){
+            for(int i = 0; i < quantTerm; i++){
+                pos_solu[i] = vizinhos[i];
+            }    
+        }
+    }
 }
 
 
@@ -94,6 +119,12 @@ int main(){
     int vizinhos[quantTerm];
     int melhor_solu[quantTerm];
     srand(time(NULL));
+
+    FILE *f_log = fopen("convergencia.txt", "w");
+    if (f_log == NULL) {
+        printf("Erro ao criar arquivo de log!\n");
+        return 1;
+    }
 
     inic_3sat(clausulas);
     for(int i = 0; i< quantClausulas; i++){
@@ -107,7 +138,7 @@ int main(){
         vizinhos[i] = pos_solu[i];
     }
     int maior_pop = 0;
-    for(int k = 0; k < 50000; k++){
+    for(int k = 0; k < N; k++){
         int aux = 0;
         aux = clausulas_aceitas(clausulas, pos_solu);
         if(aux > maior_pop){
@@ -116,13 +147,18 @@ int main(){
                melhor_solu[i] = pos_solu[i];
             }
         }
-        rotina(pos_solu, vizinhos, clausulas);
         sort_vizinho(vizinhos);
+        rotina(pos_solu, vizinhos, clausulas, k);
+        for(int i = 0; i < quantTerm; i++){
+            vizinhos[i] = pos_solu[i];
+        }    
+        fprintf(f_log, "%d %d %d\n", k, aux, maior_pop);
     }
     printf("\n%i\n", maior_pop);
     for(int i = 0; i< quantTerm; i++){
         printf("%i ",melhor_solu[i]);
     }
+    fclose(f_log);
     printf("\n");
     return 0;
 }
