@@ -7,7 +7,8 @@ int quantClausulas = 91;
 int quantTerm = 20;
 double T_ini = 10.0;
 double T_fim = 0.3;
-int N = 5000;
+double N = 200000;
+double T = 5;
 
 void inic_3sat(int clausulas[quantClausulas][3]){
         FILE *f = fopen("uf20-01.txt", "r");
@@ -80,10 +81,24 @@ int clausulas_aceitas(int clausulas[quantClausulas][3], int pos_solu[quantTerm])
 int pegar(int delta, int iteracao){
     double prob = 0.0;
     double chance = 0.0;
-    double t_atual = T_ini*(pow((T_fim/T_ini), ((double)iteracao/N)));
-    chance = exp(delta/t_atual);
+
+    //Equação de temperatura
+    //Pegar forula 1 - com t inicial
+    //double t_atual = T_ini*(pow((T_fim/T_ini), ((double)iteracao/N)));
+    //chance = exp(delta/t_atual);
+    //Pegar formula 2 - sem t inicial
+    /*prob = (float)rand() / RAND_MAX;
+    if(prob < t_atual){
+        return 1;
+    }
+    else{
+        return 0;
+    }
+    return 0;*/
+    double t_atual = pow((1.0 - ((double)(iteracao/N))), T);
+    printf("\n%.2f\n", t_atual);
     prob = (float)rand() / RAND_MAX;
-    if(prob < chance){
+    if(prob < t_atual){
         return 1;
     }
     else{
