@@ -3,15 +3,15 @@
 #include <time.h>
 #include <math.h>
 
-int quantClausulas = 91;
-int quantTerm = 20;
-double T_ini = 10.0;
-double T_fim = 0.3;
-double N = 200000;
+int quantClausulas = 430;
+int quantTerm = 100;
+double T_ini = 5.0;
+double T_fim = 0.1;
+double N = 500000;
 double T = 5;
 
 void inic_3sat(int clausulas[quantClausulas][3]){
-        FILE *f = fopen("uf20-01.txt", "r");
+        FILE *f = fopen("uf100-01.txt", "r");
     if (f == NULL) {
         printf("Erro ao abrir arquivo!\n");
         exit(1);
@@ -42,8 +42,8 @@ void sort_termos(int pos_solu[quantTerm]){
 
 void sort_vizinho(int vizinho[quantTerm]){
     int aux =0;
-    for(int i =0; i < 3; i++){
-        aux = rand() % 20;
+    for(int i =0; i < 2; i++){
+        aux = rand() % quantTerm;
         if(vizinho[aux] == 0){
             vizinho[aux] = 1;
         }
@@ -83,18 +83,18 @@ int pegar(int delta, int iteracao){
     double chance = 0.0;
 
     //Equação de temperatura
-    //Pegar forula 1 - com t inicial
-    //double t_atual = T_ini*(pow((T_fim/T_ini), ((double)iteracao/N)));
-    //chance = exp(delta/t_atual);
-    //Pegar formula 2 - sem t inicial
-    /*prob = (float)rand() / RAND_MAX;
-    if(prob < t_atual){
+    /*Pegar forula 1 - com t inicial
+    double t_atual = T_ini*(pow((T_fim/T_ini), ((double)iteracao/N)));
+    chance = exp(delta/t_atual);
+    prob = (float)rand() / RAND_MAX;
+    if(prob < chance){
         return 1;
     }
     else{
         return 0;
     }
     return 0;*/
+    //Pegar formula 2 - sem t inicial
     double t_atual = pow((1.0 - ((double)(iteracao/N))), T);
     printf("\n%.2f\n", t_atual);
     prob = (float)rand() / RAND_MAX;
@@ -109,6 +109,7 @@ int pegar(int delta, int iteracao){
 
 void rotina(int pos_solu[quantTerm], int vizinhos[quantTerm], int clausulas[quantClausulas][3], int interacao){
     int a, b;
+    int cont = 0;
     a = clausulas_aceitas(clausulas, pos_solu);
     b = clausulas_aceitas(clausulas, vizinhos);
 
@@ -118,7 +119,14 @@ void rotina(int pos_solu[quantTerm], int vizinhos[quantTerm], int clausulas[quan
         }
     }
     else{
-        int pega = pegar((b - a), interacao);
+        int pega = 0;
+        /*do{
+            pega = pegar((b - a), interacao);
+            cont++;
+            sort_vizinho(vizinhos);
+            b = clausulas_aceitas(clausulas, vizinhos);
+        } while(cont < 10 && pega == 0);*/
+        pega = pegar((b - a), interacao);
         if(pega == 1){
             for(int i = 0; i < quantTerm; i++){
                 pos_solu[i] = vizinhos[i];
