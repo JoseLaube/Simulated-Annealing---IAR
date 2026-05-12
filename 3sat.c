@@ -3,19 +3,19 @@
 #include <time.h>
 #include <math.h>
 
-int quantClausulas = 91;
-int quantTerm = 20;
-double T_ini = 5.0;
-double T_fim = 0.1;
+int quantClausulas = 430;
+int quantTerm = 100;
+double T_ini = 50.0;
+double T_fim = 0.0001;
 //Tamanho de N para:
-// quantClausulas = 91 -> 5000
-// quantClausulas = 430 -> 400000
-// quantClausulas = 1065 -> 600000
-double N = 50000;
+// quantClausulas = 91 -> 5000 ------- com T_incial -> 2000
+// quantClausulas = 430 -> 400000  ------- com T incial -> 250000 
+// quantClausulas = 1065 -> 500000 ------- com T incial -> 300000
+double N = 200000;
 double T = 5;
 
 void inic_3sat(int clausulas[quantClausulas][3]){
-        FILE *f = fopen("uf20-01.txt", "r");
+        FILE *f = fopen("uf100-01.txt", "r");
     if (f == NULL) {
         printf("Erro ao abrir arquivo!\n");
         exit(1);
@@ -87,7 +87,7 @@ int pegar(int delta, int iteracao){
     double chance = 0.0;
 
     //Equação de temperatura
-    /*Pegar forula 1 - com t inicial
+    //Pegar forula 1 - com t inicial
     double t_atual = T_ini*(pow((T_fim/T_ini), ((double)iteracao/N)));
     chance = exp(delta/t_atual);
     prob = (float)rand() / RAND_MAX;
@@ -97,8 +97,8 @@ int pegar(int delta, int iteracao){
     else{
         return 0;
     }
-    return 0;*/
-    //Pegar formula 2 - sem t inicial
+    return 0;
+    /*Pegar formula 2 - sem t inicial
     double t_atual = pow((1.0 - ((double)(iteracao/N))), T);
     printf("\n%.2f\n", t_atual);
     prob = (float)rand() / RAND_MAX;
@@ -108,7 +108,7 @@ int pegar(int delta, int iteracao){
     else{
         return 0;
     }
-    return 0;
+    return 0;*/
 }
 
 void rotina(int pos_solu[quantTerm], int vizinhos[quantTerm], int clausulas[quantClausulas][3], int interacao){
