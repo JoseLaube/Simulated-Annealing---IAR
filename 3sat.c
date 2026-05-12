@@ -3,15 +3,19 @@
 #include <time.h>
 #include <math.h>
 
-int quantClausulas = 430;
-int quantTerm = 100;
+int quantClausulas = 91;
+int quantTerm = 20;
 double T_ini = 5.0;
 double T_fim = 0.1;
-double N = 500000;
+//Tamanho de N para:
+// quantClausulas = 91 -> 5000
+// quantClausulas = 430 -> 400000
+// quantClausulas = 1065 -> 600000
+double N = 50000;
 double T = 5;
 
 void inic_3sat(int clausulas[quantClausulas][3]){
-        FILE *f = fopen("uf100-01.txt", "r");
+        FILE *f = fopen("uf20-01.txt", "r");
     if (f == NULL) {
         printf("Erro ao abrir arquivo!\n");
         exit(1);
@@ -42,7 +46,7 @@ void sort_termos(int pos_solu[quantTerm]){
 
 void sort_vizinho(int vizinho[quantTerm]){
     int aux =0;
-    for(int i =0; i < 2; i++){
+    for(int i =0; i < 1; i++){
         aux = rand() % quantTerm;
         if(vizinho[aux] == 0){
             vizinho[aux] = 1;
@@ -113,7 +117,7 @@ void rotina(int pos_solu[quantTerm], int vizinhos[quantTerm], int clausulas[quan
     a = clausulas_aceitas(clausulas, pos_solu);
     b = clausulas_aceitas(clausulas, vizinhos);
 
-    if (b > a){
+    if (b >= a){
         for(int i = 0; i < quantTerm; i++){
             pos_solu[i] = vizinhos[i];
         }
